@@ -10,8 +10,9 @@
 
 Сначала склонируйте репозиторий на локальную машину:
 
-`git clone https://github.com/veselchak431/NBA.git
-cd NBA`
+`git clone https://github.com/veselchak431/NBA.git`
+
+`cd NBA`
 
 ### 2. Создание виртуального окружения
 
