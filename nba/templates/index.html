@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<div class="welcome-text">
+    <p>Welcome to use this NBA Management system, you can redirect to different pages according to your role by clicking the buttons below.</p>
+</div>
+<div class="role-buttons">
+    <button onclick="location.href='{% url 'nba:visitor_menu' %}'">Visitor</button>
+    <button onclick="location.href='{% url 'nba:admin_login' %}'">Admin</button>
+</div>
+
+<div class="slider-container" style="margin-top: 200px">
+    <button class="prev" onclick="moveSlides(-1)">&#10094;</button>
+    <div class="slider" style="">
+        <div class="slides">
+            {% for p in photo %}
+            <div class="slide">
+                <img src="{{ p.img.url }}" alt="Photo 1" onclick="enlargeImage(this)">
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    <button class="next" onclick="moveSlides(1)">&#10095;</button>
+</div>
+
+<div id="lightbox" class="lightbox" onclick="closeLightbox()">
+    <img id="lightbox-img" src="">
+</div>
+{% endblock %}

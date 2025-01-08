@@ -1,0 +1,38 @@
+{% load static %}
+<div class="header-background">
+    <div class="header-content">
+        {% if request.path == '/' %}
+            <img src="{% static 'img/logo.jpg' %}" alt="NBA Logo" class="logo">
+            <h1>NBA Management System</h1>
+        {% else %}
+            <a href= {% url 'nba:home' %}>
+            <img src="{% static 'img/logo.jpg' %}" alt="NBA Logo" class="small-logo">
+              </a>
+                <a href= {% url 'nba:home' %}>
+            <h1 style="color: white;">NBA Management System</h1>
+             </a>
+            <div class="header-buttons">
+                {% if user.is_authenticated %}
+                    <button onclick="location.href='{% url 'nba:logout' %}'">Logout</button>
+                {% endif %}
+                <button onclick="goBack()">Back</button>
+
+                <script>
+                    function goBack() {
+                        // Получаем текущий URL-адрес
+                        var currentURL = window.location.href;
+
+                        // Проверяем, содержит ли текущий URL-адрес 'team_detail'
+                        if (currentURL.includes('team_detail')) {
+                            // Если да, перенаправляем на 'team_main'
+                            window.location.href = 'http://127.0.0.1:8000/teams_main/';
+                        } else {
+                            // Иначе просто возвращаемся на предыдущую страницу
+                            window.history.back();
+                        }
+                    }
+                </script>
+            </div>
+        {% endif %}
+    </div>
+</div>

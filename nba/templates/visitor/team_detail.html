@@ -1,0 +1,278 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    {% load static %}
+    <div class="team-tab">
+        <div class="team-detail-head">
+
+            <div class="team-logo">
+                <img src="{{ team.logo.url }}" alt="Team 1 Logo">
+            </div>
+            <div style="margin: auto 50px">
+                <h3 class="team-detail-name">{{ team.team_name }} | {{ team.division.name }}</h3>
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="team-tab">
+        <div class="tab">
+            <button class="tablinks active" data-tab="Roster" onclick="openTab(event, 'Roster')">Roster</button>
+            <button class="tablinks" data-tab="Matchup" onclick="openTab(event, 'Matchup')">Matchup</button>
+            <button class="tablinks" data-tab="First Lineup" onclick="openTab(event, 'First Lineup')">First Lineup
+            </button>
+            <div class="dropdown">
+
+                <button class="dropbtn" id="selectedDropdown">{{ seasons.first }}</button>
+                <div class="dropdown-content">
+                    {% for season in seasons %}
+                        <a href="#" onclick="updateDropdown('{{ season }}')">{{ season }}</a>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <div id="Roster" class="tabcontent active">
+            <table class="custom-table" style="border: lightgray 1px solid">
+                <thead>
+                <tr>
+                    <th>No.</th>
+                    <th>Name</th>
+                    <th>Position</th>
+                    <th>Date of Birth</th>
+                    <th>College</th>
+                    <th>Experience</th>
+                    <th>Salary</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for player in players_in_team %}
+                    <tr class="">
+                        <td class="hidden" id="s">{{ player.season }}</td>
+                        <td>{{ player.shirt_number }}</td>
+
+                        <td><a href="{% url 'nba:player_detail' player.player.player_id %}">{{ player.player.name }}</a></td>
+                        <td>{{ player.player.position }}</td>
+                        <td>{{ player.player.date_of_birth }}</td>
+                        <td>{{ player.player.college }}</td>
+                        <td>{{ player.season }}</td>
+                        <td>${{ player.salary_million }}</td>
+
+                    </tr>
+
+                {% endfor %}
+
+                <!-- Добавьте здесь другие строки данных по аналогии -->
+                </tbody>
+            </table>
+        </div>
+        <div id="Matchup" class="tabcontent">
+            <table class="custom-table" style="border: lightgray 1px solid">
+                <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Matchup Type</th>
+                    <th>Opponent</th>
+                    <th>Start Time</th>
+                    <th>Result</th>
+                    <th>Location</th>
+                    <th>Status</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for matchup in matchups %}
+
+                    <tr class="">
+                        <td class="hidden" id="s">{{ matchup.season }}</td>
+                        <td>{{ matchup.start_time.date }}</td>
+                        <td>{{ matchup.matchup_type }} </td>
+                        <td>
+                            {% if team == matchup.team_away %}
+                                <a style="text-decoration: none;"
+                                   href="{% url 'nba:team_detail' matchup.team_home.team_id %}"> {{ matchup.team_home }} </a>
+                            {% else %}
+                                <a href="{% url 'nba:team_detail' matchup.team_away.team_id %}"> {{ matchup.team_away }} </a>
+                            {% endif %}
+                        </td>
+                        <td>{{ matchup.start_time.time }}</td>
+
+                        <td>
+                            {% if team == matchup.team_away %}
+                                {{ matchup.team_home_score }}-{{ matchup.team_away_score }}
+                            {% else %}
+                                {{ matchup.team_away_score }}-{{ matchup.team_home_score }}
+                            {% endif %}
+                        </td>
+                        </td>
+                        <td>{{ matchup.location }}</td>
+                        <td>{{ matchup.status_description }}</td>
+
+                    </tr>
+
+                {% endfor %}
+
+                <!-- Добавьте здесь другие строки данных по аналогии -->
+                </tbody>
+            </table>
+        </div>
+        <div id="First Lineup" class="tabcontent">
+
+            <div class="players-position-container">
+
+
+                <div class="player-position" style="top: 43%;  left: 46%; transform: translateX(-50%); ">С</div>
+                <div class="players-ticket-text" style="top: 45%;  left: 50%; transform: translateX(-50%); ">
+
+                    {% for player in players_in_team %}
+                        {% if player.player.position.abbr == 'C' %}
+                            <div class="block-test-seasons">
+                                <p class="hidden players-season">{{ player.season }}</p>
+                                <p class="players-ticket-text-name"><a href="{% url 'nba:player_detail' player.player.player_id %}">{{ player.player.name }}</a></p>
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+
+                <div class="player-position" style="top: 48%;  left: 29%; transform: translateX(-50%); ">PF</div>
+                <div class="players-ticket-text" style="top: 50%;  left: 33%; transform: translateX(-50%); ">
+
+
+                    {% for player in players_in_team %}
+                        {% if player.player.position.abbr == 'PF' %}
+                            <div class="block-test-seasons">
+                                <p class="hidden players-season">{{ player.season }}</p>
+                                <p class="players-ticket-text-name"><a href="{% url 'nba:player_detail' player.player.player_id %}">{{ player.player.name }}</a></p>
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+
+                </div>
+                <div class="player-position" style="top: 48%;  left: 62%; transform: translateX(-50%); ">SF</div>
+                <div class="players-ticket-text" style="top: 50%;  left: 66%; transform: translateX(-50%); ">
+
+                    {% for player in players_in_team %}
+                        {% if player.player.position.abbr == 'SF' %}
+                            <div class="block-test-seasons">
+                                <p class="hidden players-season">{{ player.season }}</p>
+                                <p class="players-ticket-text-name"><a href="{% url 'nba:player_detail' player.player.player_id %}">{{ player.player.name }}</a></p>
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+
+                </div>
+                <div class="player-position" style="top: 60%;  left: 38%; transform: translateX(-50%); ">SG</div>
+                <div class="players-ticket-text" style="top: 62%;  left: 42%; transform: translateX(-50%); ">
+
+                    {% for player in players_in_team %}
+                        {% if player.player.position.abbr == 'SG' %}
+                            <div class="block-test-seasons">
+                                <p class="hidden players-season">{{ player.season }}</p>
+                                <p class="players-ticket-text-name"><a href="{% url 'nba:player_detail' player.player.player_id %}">{{ player.player.name }}</a></p>
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+
+                </div>
+                <div class="player-position" style="top: 60%;  left: 54%; transform: translateX(-50%); ">PG</div>
+                <div class="players-ticket-text" style="top: 62%;  left: 58%; transform: translateX(-50%); ">
+
+                    {% for player in players_in_team %}
+                        {% if player.player.position.abbr == 'PG' %}
+                            <div class="block-test-seasons">
+                                <p class="hidden players-season">{{ player.season }}</p>
+                                <p class="players-ticket-text-name"><a href="{% url 'nba:player_detail' player.player.player_id %}">{{ player.player.name }}</a></p>
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <script>
+
+        var selected_season = "{{ seasons.first }}"; // Значение по умолчанию
+
+        function updateDropdown(season) {
+            document.getElementById('selectedDropdown').innerText = season;
+            selected_season = season;
+            // После выбора сезона скрываем и показываем строки в таблице в зависимости от сезона
+            var rows = document.querySelectorAll('.custom-table tbody tr');
+            rows.forEach(function (row) {
+                var seasonCell = row.querySelector('#s'); // Получаем ячейку с сезоном
+                if (seasonCell && seasonCell.innerText === season) {
+                    row.classList.remove('hidden');
+                } else {
+                    row.classList.add('hidden');
+                }
+            })
+
+
+            var prows = document.querySelectorAll('.block-test-seasons');
+            prows.forEach(function (prow) {
+                var seasonCell = prow.querySelector('.players-season'); // Получаем ячейку с сезоном
+                var playerName = prow.querySelector('.players-ticket-text-name'); // Получаем блок с именем игрока
+                if (seasonCell && seasonCell.innerText === season) {
+                    playerName.classList.remove('hidden'); // Показываем имя игрока
+                } else {
+                    playerName.classList.add('hidden'); // Скрываем имя игрока
+                }
+            });
+
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            // Вызываем функцию updateDropdown с выбранным сезоном при загрузке страницы
+            updateDropdown(selected_season);
+        });
+
+        function openTab(evt, tabName) {
+            // Сначала обновляем параметр URL
+            const urlParams = new URLSearchParams(window.location.search);
+            urlParams.set('tab', tabName);
+            history.pushState(null, null, '?' + urlParams.toString());
+
+            // Теперь активируем вкладку как обычно
+            const tabcontent = document.getElementsByClassName("tabcontent");
+            for (let i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].style.display = "none";
+            }
+            const tablinks = document.getElementsByClassName("tablinks");
+            for (let i = 0; i < tablinks.length; i++) {
+                tablinks[i].classList.remove("active");
+            }
+            document.getElementById(tabName).style.display = "flex";
+            evt.currentTarget.classList.add("active");
+        }
+
+        // Проверяем параметры URL при загрузке страницы
+        document.addEventListener('DOMContentLoaded', function () {
+            const urlParams = new URLSearchParams(window.location.search);
+            const tabToActivate = urlParams.get('tab');
+            if (tabToActivate && document.getElementById(tabToActivate)) {
+                const tabcontent = document.getElementsByClassName("tabcontent");
+                for (let i = 0; i < tabcontent.length; i++) {
+                    tabcontent[i].style.display = "none";
+                }
+                const tablinks = document.getElementsByClassName("tablinks");
+                for (let i = 0; i < tablinks.length; i++) {
+                    tablinks[i].classList.remove("active");
+                }
+                document.getElementById(tabToActivate).style.display = "flex";
+                const activeTabButton = document.querySelector(`.tablinks[data-tab="${tabToActivate}"]`);
+                if (activeTabButton) {
+                    activeTabButton.classList.add("active");
+                }
+            }
+        });
+
+
+    </script>
+
+{% endblock %}

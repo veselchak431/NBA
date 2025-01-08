@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    {% load static %}
+    <div class="gallery-container">
+        <div class="gallery">
+            {% for photo in page_obj %}
+            <div class="gallery-item">
+                <img src="{{ photo.img.url }}" alt="Photo 1" onclick="enlargeImage(this)">
+            </div>
+            {% endfor %}
+
+        </div>
+    </div>
+
+    <div id="lightbox" class="lightbox" onclick="closeLightbox()">
+        <img id="lightbox-img" src="" alt="Enlarged photo">
+    </div>
+
+     <div class="pagination-container" style="z-index: 0">
+        <div class="pagination">
+        <span class="step-links">
+            {% if page_obj.has_previous %}
+                <a href="?page=1&data={{ data }}">first</a>
+                <a href="?page={{ page_obj.previous_page_number }}&data={{ data }}">previous</a>
+            {% endif %}
+
+            <span class="current">
+                Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+            </span>
+
+            {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}&data={{ data }}">next</a>
+                <a href="?page={{ page_obj.paginator.num_pages }}&data={{ data }}">last</a>
+            {% endif %}
+        </span>
+        </div>
+    </div>
+
+
+{% endblock %}

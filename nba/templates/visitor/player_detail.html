@@ -1,0 +1,196 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    {% load static %}
+
+
+    <div class="player-info">
+        <div class="player-image">
+            <img src="{% static 'img/person.png' %}" alt="{{ player.name }}">
+        </div>
+        <div class="player-details">
+            <h2>{{ player.name }}</h2>
+            <hr>
+            <div class="player-stats">
+                <div>
+                    <span>{{ player_in_team.shirt_number }}</span>
+
+                </div>
+                <p>|</p>
+                <div>
+                    <span>{{ player.height }}</span>
+
+                </div>
+                <p>|</p>
+                <div>
+                    <span> <a
+                            href="{% url 'nba:team_detail' player_in_team.team.team_id %}">{{ player_in_team.team }}</a></span>
+
+
+                </div>
+
+            </div>
+            <table class="info-table" >
+                <tr>
+                    <th>Born</th>
+                    <td class="bold">{{ player.date_of_birth }}</td>
+                    <th>Experience</th>
+                    <td class="bold" style="white-space: nowrap">{{ player.calculate_experience|default_if_none:"N/A" }}
+                        Years
+                    </td>
+                </tr>
+                <tr>
+                    <th>College</th>
+                    <td class="bold">{{ player.college }}</td>
+                    <th>Salary</th>
+                    <td class="bold">${{ player_in_team.salary_million }}M</td>
+                </tr>
+            </table>
+        </div>
+        <div class="stats-table-container">
+            <h3>2016-2017 Season</h3>
+            <table class="stats-table" style="border: lightgray 1px solid">
+                <tr>
+                    <th>PPG</th>
+                    <th>APG</th>
+                    <th>RPG</th>
+                </tr>
+                <tr>
+                    <td>{{ season_stats.ppg }}</td>
+                    <td>{{ season_stats.apg }}</td>
+                    <td>{{ season_stats.rpg }}</td>
+                </tr>
+            </table>
+            <h3>Career</h3>
+            <table class="stats-table" style="border: lightgray 1px solid">
+                <tr>
+                    <th>PPG</th>
+                    <th>APG</th>
+                    <th>RPG</th>
+                </tr>
+                <tr>
+                    <td>{{ career_stats.ppg }}</td>
+                    <td>{{ career_stats.apg }}</td>
+                    <td>{{ career_stats.rpg }}</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+<div class="points-tab">
+    <div class="tab">
+        <button class="tablinks active" onclick="openTab(event, 'Points')">Points</button>
+        <button class="tablinks" onclick="openTab(event, 'Rebounds')">Rebounds</button>
+        <button class="tablinks" onclick="openTab(event, 'Assists')">Assists</button>
+        <button class="tablinks" onclick="openTab(event, 'Steals')">Steals</button>
+        <button class="tablinks" onclick="openTab(event, 'Blocks')">Blocks</button>
+    </div>
+    <div id="Points" class="tabcontent active">
+        <div class="search-container">
+            <input type="date" value="2017-08-31">
+            <input type="date" value="2017-09-15">
+            <button>Search</button>
+        </div>
+        <div class="chart-container">
+            <canvas id="pointsChart"></canvas>
+        </div>
+    </div>
+
+        <div id="Rebounds" class="tabcontent ">
+        <div class="search-container">
+            <input type="date" value="2017-08-31">
+            <input type="date" value="2017-09-15">
+            <button>Search</button>
+        </div>
+        <div class="chart-container">
+            <canvas id="pointsChart"></canvas>
+        </div>
+    </div>
+
+    <!-- Repeat the above structure for other tabs -->
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    var pointsChart; // Variable to hold the chart object
+
+    // Function to initialize the chart
+    function initChart() {
+        const ctx = document.getElementById('pointsChart').getContext('2d');
+        pointsChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: ['9/4', '9/5', '9/6', '9/7', '9/8', '9/9', '9/10', '9/11'],
+                datasets: [{
+                    label: 'Points',
+                    data: [30, 20, 25, 35, 40, 20, 15, 30],
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    }
+
+    // Call the function to initialize the chart when the page loads
+    initChart();
+
+    function openTab(evt, tabName) {
+        // Declare all variables
+        var i, tabcontent, tablinks;
+
+        // Get all elements with class="tabcontent" and hide them
+        tabcontent = document.getElementsByClassName("tabcontent");
+        for (i = 0; i < tabcontent.length; i++) {
+            tabcontent[i].style.display = "none";
+        }
+
+        // Get all elements with class="tablinks" and remove the class "active"
+        tablinks = document.getElementsByClassName("tablinks");
+        for (i = 0; i < tablinks.length; i++) {
+            tablinks[i].className = tablinks[i].className.replace(" active", "");
+        }
+
+        // Show the current tab, and add an "active" class to the button that opened the tab
+        document.getElementById(tabName).style.display = "flex";
+        evt.currentTarget.className += " active";
+
+        // Update chart data based on selected tab
+        updateChartData(tabName);
+    }
+
+    function updateChartData(tabName) {
+        var chartData = [];
+        switch (tabName) {
+            case 'Points':
+                chartData = [30, 20, 25, 35, 40, 20, 15, 30];
+                break;
+            case 'Rebounds':
+                chartData = [10, 15, 20, 25, 30, 35, 40, 45];
+                break;
+            case 'Assists':
+                chartData = [5, 10, 15, 20, 25, 30, 35, 40];
+                break;
+            case 'Steals':
+                chartData = [2, 4, 6, 8, 10, 12, 14, 16];
+                break;
+            case 'Blocks':
+                chartData = [3, 6, 9, 12, 15, 18, 21, 24];
+                break;
+            default:
+                break;
+        }
+
+        pointsChart.data.datasets[0].data = chartData;
+        pointsChart.update();
+    }
+</script>
+
+{% endblock %}

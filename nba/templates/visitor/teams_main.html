@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    {% load static %}
+    <div class="team-tab">
+        <div class="tab">
+            {% for conf in conference %}
+                <button class="tablinks {% if forloop.first %}active{% endif %}"
+                        onclick="openTab(event, '{{ conf.name }}')">{{ conf.name }}</button>
+            {% endfor %}
+        </div>
+        {% for conf in conference %}
+            <div id="{{ conf.name }}" class="tabcontent {% if forloop.first %}active{% endif %}">
+                {% for division in divisions %}
+                    {% if division.conference == conf %}
+                        <div class="column">
+                            <h3 class="column-name">{{ division.name }}</h3>
+                            {% for team in teams %}
+
+                                {% if team.division == division %}
+                            <div class="team-info">
+                                <div class="team-logo">
+                                    <img src="{{ team.logo.url }}" alt="Team 1 Logo">
+                                </div>
+                                <div class="team-details">
+                                    <h3 class="team-name">{{ team.team_name }}</h3>
+
+
+                                    <div class="team-links">
+                                        <a href="{% url 'nba:team_detail' team.team_id %}?tab=Roster">Roster</a>
+                                        <a href="{% url 'nba:team_detail' team.team_id %}?tab=Matchup">Matchup</a>
+                                        <a href="{% url 'nba:team_detail' team.team_id %}?tab=First Lineup">First Lineup</a>
+                                    </div>
+                                </div>
+                            </div>
+                                {% endif %}
+                            {% endfor %}
+
+                        </div>
+                    {% endif %}
+                {% endfor %}
+
+            </div>
+
+
+        {% endfor %}
+
+    </div>
+
+    <script>
+        function openTab(evt, tabName) {
+            // Declare all variables
+            var i, tabcontent, tablinks;
+
+            // Get all elements with class="tabcontent" and hide them
+            tabcontent = document.getElementsByClassName("tabcontent");
+            for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].style.display = "none";
+            }
+
+            // Get all elements with class="tablinks" and remove the class "active"
+            tablinks = document.getElementsByClassName("tablinks");
+            for (i = 0; i < tablinks.length; i++) {
+                tablinks[i].className = tablinks[i].className.replace(" active", "");
+            }
+
+            // Show the current tab, and add an "active" class to the button that opened the tab
+            document.getElementById(tabName).style.display = "flex";
+            evt.currentTarget.className += " active";
+        }
+    </script>
+
+{% endblock %}

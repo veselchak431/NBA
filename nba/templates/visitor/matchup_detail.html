@@ -1,0 +1,342 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    {% load static %}
+
+
+    <div class="matchup">
+        <div class="matchup-head-block">
+            <div class="team-details" style="margin: auto">
+                <a href="{% url 'nba:team_detail' team_away.team_id %}"><h3 class="team-name">{{ team_away }}</h3>
+                </a>
+
+
+            </div>
+            <div class="team-logo" style="width: 40%">
+                <img src="{{ team_away.logo.url }}" alt="Team 1 Logo">
+            </div>
+            <div class="team-details" style="margin: auto">
+                <h3 class="team-name">{{ matchup.team_away_score }}</h3>
+            </div>
+        </div>
+        <div class="matchup-head-data">
+            <table class="matchup-table">
+                <tr>
+                    <th></th>
+                    <th>T</th>
+                    <th>1st</th>
+                    <th>2st</th>
+                    <th>3st</th>
+                    <th>4st</th>
+                    <th>OT1</th>
+                </tr>
+                <tr>
+                    <td>{{ team_away.abbr }}</td>
+                    <td>{{ matchup.team_away_score }}</td>
+                    {% for detail in matchup_details %}
+                        <td>{{ detail.team_away_score }}</td>
+                    {% endfor %}
+                    <td>{{ score_details.team_away_OT1 }}</td>
+                </tr>
+                <tr>
+                    <td>{{ team_home.abbr }}</td>
+                    <td>{{ matchup.team_home_score }}</td>
+                    {% for detail in matchup_details %}
+                        <td>{{ detail.team_home_score }}</td>
+                    {% endfor %}
+                    <td>{{ score_details.team_home_OT1 }}</td>
+                </tr>
+            </table>
+            <div style=" border-radius: 5px;background-color: {% if matchup.status == 1 %} grey {% elif matchup.status == 0 %} red {% elif matchup.status == -1 %}  lightblue {% endif %}">
+                <p style="text-align: center; color: white; padding: 10px; ">{{ matchup.status_description }}</p>
+            </div>
+        </div>
+
+        <div class="matchup-head-block">
+            <div class="team-details" style="margin: auto">
+                <h3 class="team-name">{{ matchup.team_home_score }}</h3>
+            </div>
+            <div class="team-logo" style="width: 40%">
+                <img src="{{ team_home.logo.url }}" alt="Team 1 Logo">
+            </div>
+
+            <div class="team-details" style="margin: auto">
+                <a href="{% url 'nba:team_detail' team_home.team_id %}"><h3
+                        class="team-name">{{ team_home }}</h3></a>
+            </div>
+        </div>
+
+    </div>
+
+
+    <div class="team-tab">
+        <div class="tab">
+            <button class="tablinks active" data-tab="Team Status" onclick="openTab(event, 'Team Status')">Team Status
+            </button>
+            <button class="tablinks" data-tab="Short Chart" onclick="openTab(event, 'Short Chart')">Short Chart</button>
+            <button class="tablinks" data-tab="Log" onclick="openTab(event, 'Log')">Log</button>
+        </div>
+
+        <div id="Team Status" class="tabcontent active" style="display: flex; flex-direction: row;">
+
+            <!-- Upper part with team logos -->
+
+
+            <!-- Middle part with table -->
+            <div style="display: flex; justify-content: center; width: 60%">
+                <table class="stats-table" style="border-collapse: collapse; width: 100%; border: 1px solid lightgray;">
+                    <tr>
+                        <th style="width: 60%"></th>
+                        <td style="text-align: center; vertical-align: middle;">
+                            <div class="team-logo" style=" margin: 0 auto; justify-content: center">
+                                <img src="{{ team_away.logo.url }}" alt="Team 1 Logo">
+                            </div>
+                        </td>
+                        <td>
+                            <div class="team-logo" style=" margin: 0 auto; justify-content: center">
+                                <img src="{{ team_home.logo.url }}" alt="Team 1 Logo">
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>FG Made-Attempted</th>
+                        <td>{{ home_action_counts.Field_Goal_Made }}-{{ home_action_counts.Field_Goal_Made|add:home_action_counts.Field_Goal_Missed }}</td>
+                        <td>{{ away_action_counts.Field_Goal_Made }}-{{ away_action_counts.Field_Goal_Made|add:away_action_counts.Field_Goal_Missed }}</td>
+                    </tr>
+                    <tr>
+                        <th>3PT Made-Attempted</th>
+                        <td>{{ home_action_counts.Three_Points_Field_Goal_Made }}-{{ home_action_counts.Three_Points_Field_Goal_Made|add:home_action_counts.Three_Points_Field_Goal_Missed }}</td>
+                        <td>{{ away_action_counts.Three_Points_Field_Goal_Made }}-{{ away_action_counts.Three_Points_Field_Goal_Made|add:away_action_counts.Three_Points_Field_Goal_Missed }}</td>
+                    </tr>
+                    <tr>
+                        <th>FT Made-Attempted</th>
+                        <td>{{ home_action_counts.Free_Throw_Made }}-{{ home_action_counts.Free_Throw_Made|add:home_action_counts.Free_Throw_Missed }}</td>
+                        <td>{{ away_action_counts.Free_Throw_Made }}-{{ away_action_counts.Free_Throw_Made|add:away_action_counts.Free_Throw_Missed }}</td>
+                    </tr>
+                    <tr>
+                        <th>Rebounds</th>
+                        <td>{{ home_action_counts.Defensive_Rebound }}</td>
+                        <td>{{ away_action_counts.Defensive_Rebound }}</td>
+                    </tr>
+                    <tr>
+                        <th>Assists</th>
+                        <td>{{ home_action_counts.Assist }}</td>
+                        <td>{{ away_action_counts.Assist }}</td>
+                    </tr>
+                    <tr>
+                        <th>Steals</th>
+                        <td>{{ home_action_counts.Steal }}</td>
+                        <td>{{ away_action_counts.Steal }}</td>
+                    </tr>
+                    <tr>
+                        <th>Blocks</th>
+                        <td>{{ home_action_counts.Block }}</td>
+                        <td>{{ away_action_counts.Block }}</td>
+
+                    </tr>
+                    <tr>
+                        <th>Turnovers</th>
+                        <td>{{ home_action_counts.Turnover }}</td>
+                        <td>{{ away_action_counts.Turnover }}</td>
+                    </tr>
+                </table>
+            </div>
+
+            <!-- Lower part with field goal % and three point % -->
+            <div style="display: flex; width:40%; flex-direction: column; justify-content: flex-start; ">
+                <div style="margin: 0 auto;">
+                    <div style="border: 1px solid lightgray; padding: 10px; width:400px">
+                        <p>Field Goal %</p>
+                        <div style="display: flex; justify-content: space-between;width: 100%; margin-bottom: 10px; margin-top: 10px;">
+                            <div style="display: flex;flex-direction: row; justify-content: space-between;width: 100% ">
+                                <div style="width: 10%; padding: 0 20px;">
+                                    <p>{{ team_away.abbr }}</p>
+                                </div>
+                                <div style="margin-left: 30px; width: 80%; height: 20px; background: none; display: flex; justify-content: flex-start; border: 1px solid black;border-radius: 5px">
+                                    <div style=";width: {{ score_details.team_away_goal_proc}}%; height: 19px; background: deepskyblue; display: flex; justify-content: flex-start;border-radius: 5px"></div>
+
+                                </div>
+                                <p style="margin-left: 20px;">{{ score_details.team_away_goal_proc|floatformat:"2" }}</p>
+                            </div>
+                        </div>
+                        <div style="display: flex; justify-content: space-between;width: 100%">
+                            <div style="display: flex;flex-direction: row; justify-content: space-between;width: 100% ">
+                                <div style="width: 10%; padding: 0 20px;">
+                                    <p>{{ team_home.abbr }}</p>
+                                </div>
+                                <div style="margin-left: 30px; width: 80%; height: 20px; background: none; display: flex; justify-content: flex-start; border: 1px solid black;border-radius: 5px">
+
+                                    <div style=";width: {{ score_details.team_home_goal_proc}}%; height: 19px; background: deepskyblue; display: flex; justify-content: flex-start;border-radius: 5px"></div>
+                                </div>
+                                <p style="margin-left: 20px;">{{ score_details.team_home_goal_proc|floatformat:"2" }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div style="margin: 25px auto;">
+                    <div style="border: 1px solid lightgray ; padding: 10px; width: 400px">
+                        <p>Three Point %</p>
+                        <div style="display: flex; justify-content: space-between;width: 100%; margin-bottom: 10px; margin-top: 10px;">
+                            <div style="display: flex;flex-direction: row; justify-content: space-between;width: 100% ">
+                                <div style="width: 10%; padding: 0 20px;">
+                                    <p>{{ team_away.abbr }}</p>
+                                </div>
+                                <div style="margin-left: 30px; width: 80%; height: 20px; background: none; display: flex; justify-content: flex-start; border: 1px solid black;border-radius: 5px">
+                                    <div style=";width: {{ score_details.team_away_three_proc}}%; height: 19px; background: deepskyblue; display: flex; justify-content: flex-start;border-radius: 5px"></div>
+
+                                </div>
+                                <p style="margin-left: 20px;">{{ score_details.team_away_three_proc|floatformat:"2" }}</p>
+                            </div>
+                        </div>
+                        <div style="display: flex; justify-content: space-between;width: 100%">
+                            <div style="display: flex;flex-direction: row; justify-content: space-between;width: 100% ">
+                                <div style="width: 10%; padding: 0 20px;">
+                                    <p>{{ team_home.abbr }}</p>
+                                </div>
+                                <div style="margin-left: 30px; width: 80%; height: 20px; background: none; display: flex; justify-content: flex-start; border: 1px solid black;border-radius: 5px">
+                                    <div style=";width: {{ score_details.team_home_three_proc}}%; height: 19px; background: deepskyblue; display: flex; justify-content: flex-start;border-radius: 5px"></div>
+
+                                </div>
+                                <p style="margin-left: 20px;">{{ score_details.team_home_three_proc|floatformat:"2" }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="Short Chart" class="tabcontent">
+
+            <div class="players-start-container">
+                <img class="players-start-container" src="  {% static 'img/court-transparent.jpg' %} ">
+
+
+                <div class="players-start-text" style="top: 45%;  left: 40%; transform: translateX(-50%); ">
+                    <table class="matchup-table">
+                        <tr>
+                            <th style="width: 5%;"><img style="width: 35px; height: 35px"
+                                                        src="{{ matchup.team_away.logo.url }}"></th>
+                        </tr>
+                        {% for player in start_details.start_team_away %}
+                            <tr>
+                                <td>
+                                    <div class="block-test-seasons">
+                                        <p class="players-ticket-text-name"><a
+                                                href="{% url 'nba:player_detail' player.player.player_id %}">{{ player.player.name }}</a>
+                                        </p>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </table>
+                </div>
+
+                <div class="players-start-text"
+                     style="background: none;top: 48%;  left: 50%; transform: translateX(-50%); ">
+                    <img style="width: 150px; height: 150px"
+                         src="{{ matchup.team_home.logo.url }}">
+                </div>
+
+                <div class="players-start-text" style="top: 45%;  left: 60%; transform: translateX(-50%); ">
+                    <table class="matchup-table">
+                        <tr>
+                            <th style="width: 5%;"><img style="width: 35px; height: 35px"
+                                                        src="{{ matchup.team_home.logo.url }}"></th>
+                        </tr>
+                        {% for player in start_details.start_team_home %}
+                            <tr>
+                                <td>
+                                    <div class="block-test-seasons">
+                                        <p class="players-ticket-text-name"><a
+                                                href="{% url 'nba:player_detail' player.player.player_id %}">{{ player.player.name }}</a>
+                                        </p>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div id="Log" class="tabcontent" style="flex-direction: column">
+            <div style="flex-direction: row; display: flex; padding-bottom: 10px">
+                <div style="margin:  auto 0;">
+                    <p>Quarter: </p>
+                </div>
+                <div class="dropdown">
+                    <button class="dropbtn" id="selectedDropdown">1</button>
+                    <div class="dropdown-content">
+                        <a href="#" onclick="updateDropdown('1')">1</a>
+                        <a href="#" onclick="updateDropdown('2')">2</a>
+                        <a href="#" onclick="updateDropdown('3')">3</a>
+                        <a href="#" onclick="updateDropdown('4')">4</a>
+                    </div>
+                </div>
+            </div>
+            <div class="table-container-overflow" style="height: 400px; overflow: auto;">
+                <table class="custom-table">
+                    <thead>
+                    <tr>
+                        <th>OccurTime</th>
+                        <th>Team</th>
+                        <th>Player</th>
+                        <th>ActionType</th>
+                        <th>Remark</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for log_data in log %}
+                        <tr>
+                            <td class="hidden" id="s">{{ log_data.quarter }}</td>
+                            <td>{{ log_data.occur_time }}</td>
+                            <td>{{ log_data.team.abbr }}</td>
+                            <td>{{ log_data.player }}</td>
+                            <td>{{ log_data.action_type }}</td>
+                            <td>{{ log_data.remark }}</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <script>
+        function openTab(evt, tabName) {
+            // Сначала обновляем параметр URL
+
+            // Теперь активируем вкладку как обычно
+            const tabcontent = document.getElementsByClassName("tabcontent");
+            for (let i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].style.display = "none";
+            }
+            const tablinks = document.getElementsByClassName("tablinks");
+            for (let i = 0; i < tablinks.length; i++) {
+                tablinks[i].classList.remove("active");
+            }
+            document.getElementById(tabName).style.display = "flex";
+            evt.currentTarget.classList.add("active");
+        }
+
+        var selected_quarter = "1"; // Значение по умолчанию
+
+        function updateDropdown(quarter) {
+            document.getElementById('selectedDropdown').innerText = quarter;
+            selected_quarter = quarter;
+            // После выбора квартала скрываем и показываем строки в таблице в зависимости от квартала
+            var rows = document.querySelectorAll('.custom-table tbody tr');
+            rows.forEach(function (row) {
+                var seasonCell = row.querySelector('#s'); // Получаем ячейку с кварталом
+                if (seasonCell && seasonCell.innerText === quarter) {
+                    row.classList.remove('hidden');
+                } else {
+                    row.classList.add('hidden');
+                }
+            });
+        }
+
+        // Изначально скрываем строки, которые не соответствуют выбранному кварталу
+        document.addEventListener('DOMContentLoaded', function () {
+            updateDropdown(selected_quarter);
+        });
+    </script>
+
+{% endblock %}

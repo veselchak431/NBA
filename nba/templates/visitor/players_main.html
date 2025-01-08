@@ -1,0 +1,92 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    {% load static %}
+
+    <div class="team-tab">
+        <div class="team-detail-head">
+            <form method="get" action=".">
+                <div class="dropdown">
+
+                    <select name="season" class="styled-select" onchange="this.form.submit()">
+                        <option value="">Select Season</option>
+                        {% for season in seasons %}
+                            <option value="{{ season }}"
+                                    {% if season|stringformat:"s" == selected_season %}selected{% endif %}>{{ season }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="dropdown">
+                    <select name="team" class="styled-select" onchange="this.form.submit()">
+                        <option value="">Select Team</option>
+                        {% for team in teams %}
+                            <option value="{{ team }}"
+                                    {% if team|stringformat:"s" == selected_team %}selected{% endif %}>{{ team }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="dropdown">
+                    <input type="text" class="styled-input" name="playername" value="{{ selected_player_name }}"
+                           placeholder="Player Name"
+                           onchange="this.form.submit()">
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <table class="custom-table" style="border: lightgray 1px solid">
+        <thead>
+        <tr>
+            <th></th>
+            <th>No.</th>
+            <th>Name</th>
+            <th>Team</th>
+            <th>Position</th>
+            <th>Weight</th>
+            <th>Height</th>
+            <th>Experience</th>
+            <th>Country</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for player in page_obj %}
+            <tr>
+                {% if player.player.img.url != '' %}
+                    <td><img style="width: 101px; height: 96px" src="{{ player.player.img.url }}"></td>
+                {% else %}
+                    <td><img src="{% static "img/person.png" %}"></td>
+                {% endif %}
+                <td>{{ player.shirt_number }}</td>
+
+                <td><a href="{% url 'nba:player_detail' player.player_id %}">{{ player.player.name }}</a></td>
+                <td><a href="{% url 'nba:team_detail' player.team.team_id %}">{{ player.team }}</a></td>
+                <td>{{ player.player.position.abbr }}</td>
+                <td>{{ player.player.weight }}</td>
+                <td>{{ player.player.height }}</td>
+                <td>{{ player.player.calculate_experience }}</td>
+                <td>{{ player.player.country }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    <div class="pagination-container">
+        <div class="pagination">
+        <span class="step-links">
+            {% if page_obj.has_previous %}
+                <a href="?page=1&season={{ selected_season }}&team={{ selected_team }}&playername={{ selected_player_name }}">first</a>
+                <a href="?page={{ page_obj.previous_page_number }}&season={{ selected_season }}&team={{ selected_team }}&playername={{ selected_player_name }}">previous</a>
+            {% endif %}
+
+            <span class="current">
+                Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+            </span>
+
+            {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}&season={{ selected_season }}&team={{ selected_team }}&playername={{ selected_player_name }}">next</a>
+                <a href="?page={{ page_obj.paginator.num_pages }}&season={{ selected_season }}&team={{ selected_team }}&playername={{ selected_player_name }}">last</a>
+            {% endif %}
+        </span>
+        </div>
+    </div>
+
+{% endblock %}

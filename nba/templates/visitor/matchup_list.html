@@ -1,0 +1,113 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    {% load static %}
+
+    <div class="matchup-head-container">
+        <div class="search-container" style="height: 100px;">
+            <div style="margin: auto">
+                <form>
+                    <input type="date" name="date" value="{{ date }}" onchange="this.form.submit()">
+                </form>
+            </div>
+        </div>
+        <div class="matchup-head">
+            {% if matchups %}
+                <div class="matchup-head-team">
+                    <div class="team-logo" style="width: 40%">
+                        <img src="{{ matchups.first.team_away.logo.url }}" alt="Team 1 Logo">
+                    </div>
+                    <div class="team-details" style="margin: auto">
+                        <a href="{% url 'nba:team_detail' matchups.first.team_away.team_id %}"><h3 class="team-name"
+                                                                                                   style="margin-bottom: 10px;">{{ matchups.first.team_away }}</h3>
+                        </a>
+                        <div class="team-links">
+                            <p>Team away</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="matchup-head-VS">
+                    <div>
+                        <h1 style="text-align: center">VS</h1>
+                    </div>
+                    <div>
+                        <h3 style="text-align: center">10:30</h3>
+                    </div>
+                </div>
+                <div class="matchup-head-team">
+                    <div class="team-logo" style="width: 40%">
+                        <img src="{{ matchups.first.team_home.logo.url }}" alt="Team 1 Logo">
+                    </div>
+                    <div class="team-details" style="margin: auto">
+                        <a href="{% url 'nba:team_detail' matchups.first.team_home.team_id %}"><h3 class="team-name"
+                                                                                                   style="margin-bottom: 10px;">{{ matchups.first.team_home }}</h3>
+                        </a>
+                        <div class="team-links">
+                            <p>Team home</p>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+
+    </div>
+    <table class="matchups-table">
+
+        <tbody>
+        {% for matchup in page_obj %}
+            <tr style="border-top: lightgray 1px solid; border-bottom: lightgray 1px solid;">
+                <td style="width: 10%">
+                    <div style=" border-radius: 5px;background-color: {% if matchup.status == 1 %} grey {% elif matchup.status == 0 %} red {% elif matchup.status == -1 %}  lightblue {% endif %}">
+                        <p style="text-align: center; color: white; padding: 10px; ">{{ matchup.status_description }}</p>
+                    </div>
+                </td>
+                <td style=" width: 10%; font-size: 18px;color: #5a6268">{{ matchup.start_time|date:"d/m  H:i" }}</td>
+                <td style="width: 5%"><img style="width: 50px; height: 50px" src="{{ matchup.team_away.logo.url }}">
+                </td>
+                <td style="width: 22%"><a
+                        href="{% url 'nba:team_detail' matchup.team_away.team_id %}">{{ matchup.team_away }}</a></td>
+                <td style="width: 10%; ">{{ matchup.team_away_score }}-{{ matchup.team_home_score }}</td>
+                <td style="width: 10%; text-align: right"><img style="width: 50px; height: 50px"
+                                                               src="{{ matchup.team_home.logo.url }}"></td>
+                <td style="width: 20%"><a
+                        href="{% url 'nba:team_detail' matchup.team_home.team_id %}">{{ matchup.team_home }}</a></td>
+                <td style="width: 5%">{% if matchup.location != None %}{{ matchup.location }}{% endif %}</td>
+                <td>
+                    <div>
+
+                        <a href="{% url 'nba:matchup_detail' matchup.matchup_id%}">
+
+                            <button class="custom-button">view</button>
+                        </a>
+                    </div>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+
+    </table>
+
+
+    <div class="pagination-container">
+        <div class="pagination">
+        <span class="step-links">
+            {% if page_obj.has_previous %}
+                <a href="?page=1&data={{ data }}">first</a>
+                <a href="?page={{ page_obj.previous_page_number }}&data={{ data }}">previous</a>
+            {% endif %}
+
+            <span class="current">
+                Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+            </span>
+
+            {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}&data={{ data }}">next</a>
+                <a href="?page={{ page_obj.paginator.num_pages }}&data={{ data }}">last</a>
+            {% endif %}
+        </span>
+        </div>
+    </div>
+
+
+
+{% endblock %}

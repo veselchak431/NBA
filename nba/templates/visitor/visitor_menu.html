@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<div class="welcome-text">
+    <h2>Welcome to the Visitor Menu!</h2>
+</div>
+
+<div class="role-buttons">
+    <button class="btn-large" onclick="location.href='{% url 'nba:teams_main' %}'">Teams</button>
+    <button class="btn-large" onclick="location.href='{% url 'nba:players_main' %}'">Players</button>
+</div>
+<div class="role-buttons">
+    <button class="btn-large" onclick="location.href='{% url 'nba:matchups_list' %}'">Matchups</button>
+    <button class="btn-large" onclick="location.href='{% url 'nba:photos' %}'">Photos</button>
+</div>
+{% endblock %}

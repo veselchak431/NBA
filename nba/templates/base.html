@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+{% load static %}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <title>{{ title }}</title>
+</head>
+<body>
+    {% include 'includes/header.html' %}
+    <div class="main-content">
+        {% block content %}{% endblock %}
+    </div>
+    <footer>
+        {% include 'includes/footer.html' %}
+    </footer>
+    <script src="{% static 'js/script.js' %}"></script>
+</body>
+</html>
